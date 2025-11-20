@@ -73,14 +73,10 @@
                       Editar
                     </a>
 
-                    <form class="d-inline" method="POST"
-                          action="{{ url_for('responsables_delete', resp_id=r.id) }}">
-                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                      <button class="btn btn-sm btn-outline-danger" type="submit"
-                              onclick="return confirm('¿Eliminar responsable {{ r.nombre_responsable }}?');">
-                        Eliminar
-                      </button>
-                    </form>
+                    <a class="btn btn-sm btn-outline-danger"
+                       href="{{ url_for('responsables_delete', resp_id=r.id) }}">
+                      Eliminar
+                    </a>
                   {% endif %}
                 </td>
               </tr>

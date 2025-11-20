@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Confirmar eliminación{% endblock %}
+
+{% block head_extra %}
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6">
+    <div class="card shadow-sm border-0">
+      <div class="card-body">
+        <div class="text-center mb-4">
+          <span class="d-inline-flex align-items-center justify-content-center bg-danger-subtle text-danger rounded-circle mb-3" style="width: 64px; height: 64px;">
+            <i class="bi bi-exclamation-triangle fs-3"></i>
+          </span>
+          <h3 class="fw-semibold mb-1">Confirmar eliminación</h3>
+          <p class="text-muted mb-0">
+            Vas a eliminar el {{ entity_label }} <strong>{{ entity_name }}</strong>. Esta acción no se puede deshacer.
+          </p>
+        </div>
+
+        <form method="POST">
+          {{ form.hidden_tag() }}
+
+          <div class="mb-3">
+            {{ form.recaptcha() }}
+            {% if form.recaptcha.errors %}
+              <div class="text-danger small mt-2">
+                {% for err in form.recaptcha.errors %}
+                  <div>{{ err }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="d-flex flex-column flex-sm-row gap-2">
+            <button class="btn btn-danger flex-fill" type="submit">
+              <i class="bi bi-trash me-1"></i> Confirmar eliminación
+            </button>
+            <a class="btn btn-outline-secondary flex-fill" href="{{ cancel_url }}">
+              Cancelar
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

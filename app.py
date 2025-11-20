@@ -28,7 +28,16 @@ from sqlalchemy.orm import sessionmaker, scoped_session, joinedload, aliased
 # --- Local modules  para la aplicación ---
 import models  
 from models import Base, User, UserAudit, Equipo, EquipoAudit, EmpresaExterna, ResponsableEntrega
-from forms import LoginForm, UserCreateForm, UserEditForm, UserSelfEditForm, EquipoForm, EmpresaExternaForm,ResponsableEntregaForm
+from forms import (
+    LoginForm,
+    UserCreateForm,
+    UserEditForm,
+    UserSelfEditForm,
+    EquipoForm,
+    EmpresaExternaForm,
+    ResponsableEntregaForm,
+    DeleteConfirmForm,
+)
 from models import Notification
 
 from xhtml2pdf import pisa
@@ -674,7 +683,7 @@ def users_edit(user_id: int):
 
 
 
-@app.route("/usuarios/<int:user_id>/eliminar", methods=["POST"])
+@app.route("/usuarios/<int:user_id>/eliminar", methods=["GET", "POST"])
 @login_required
 @admin_required
 def users_delete(user_id: int):
@@ -688,15 +697,25 @@ def users_delete(user_id: int):
         if not u:
             raise NotFound()
 
-        # 1) Guardar snapshot en papelera (sin audit_row)
-        record_user_deletion(db, u, actor_id=current_user.id)
+        form = DeleteConfirmForm()
+        if form.validate_on_submit():
+            # 1) Guardar snapshot en papelera (sin audit_row)
+            record_user_deletion(db, u, actor_id=current_user.id)
 
-        # 2) Borrado real
-        db.delete(u)
-        db.commit()
+            # 2) Borrado real
+            db.delete(u)
+            db.commit()
 
-        flash("Usuario eliminado.", "info")
-        return redirect(url_for("users_index"))
+            flash("Usuario eliminado.", "info")
+            return redirect(url_for("users_index"))
+
+        return render_template(
+            "delete_confirm.html",
+            form=form,
+            entity_label="usuario",
+            entity_name=u.username,
+            cancel_url=url_for("users_index"),
+        )
     finally:
         db.close()
 
@@ -1339,7 +1358,7 @@ def responsables_edit(resp_id: int):
         db.close()
 
 
-@app.route("/empresas/<int:empresa_id>/eliminar", methods=["POST"])
+@app.route("/empresas/<int:empresa_id>/eliminar", methods=["GET", "POST"])
 @login_required
 @admin_required
 def empresas_delete(empresa_id: int):
@@ -1355,16 +1374,25 @@ def empresas_delete(empresa_id: int):
             flash("No puedes eliminar la empresa porque tiene equipos asociados.", "warning")
             return redirect(url_for("empresas_index"))
 
-        # Si no hay equipos, se puede eliminar.
-        db.delete(emp)
-        db.commit()
-        flash("Empresa eliminada correctamente.", "info")
-        return redirect(url_for("empresas_index"))
+        form = DeleteConfirmForm()
+        if form.validate_on_submit():
+            db.delete(emp)
+            db.commit()
+            flash("Empresa eliminada correctamente.", "info")
+            return redirect(url_for("empresas_index"))
+
+        return render_template(
+            "delete_confirm.html",
+            form=form,
+            entity_label="empresa externa",
+            entity_name=emp.nombre,
+            cancel_url=url_for("empresas_index"),
+        )
     finally:
         db.close()
 
 
-@app.route("/responsables/<int:resp_id>/eliminar", methods=["POST"])
+@app.route("/responsables/<int:resp_id>/eliminar", methods=["GET", "POST"])
 @login_required
 @admin_required
 def responsables_delete(resp_id: int):
@@ -1380,10 +1408,20 @@ def responsables_delete(resp_id: int):
             flash("No puedes eliminar el responsable porque tiene equipos asociados.", "warning")
             return redirect(url_for("responsables_index"))
 
-        db.delete(resp)
-        db.commit()
-        flash("Responsable eliminado correctamente.", "info")
-        return redirect(url_for("responsables_index"))
+        form = DeleteConfirmForm()
+        if form.validate_on_submit():
+            db.delete(resp)
+            db.commit()
+            flash("Responsable eliminado correctamente.", "info")
+            return redirect(url_for("responsables_index"))
+
+        return render_template(
+            "delete_confirm.html",
+            form=form,
+            entity_label="responsable de entrega",
+            entity_name=resp.nombre_responsable,
+            cancel_url=url_for("responsables_index"),
+        )
     finally:
         db.close()
 

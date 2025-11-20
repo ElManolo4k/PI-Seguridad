@@ -230,3 +230,10 @@ class ResponsableEntregaForm(FlaskForm):
 
     recaptcha = RecaptchaField()
     submit = SubmitField("Guardar")
+
+
+class DeleteConfirmForm(FlaskForm):
+    """Formulario genérico para confirmar eliminaciones sensibles con CAPTCHA."""
+
+    recaptcha = RecaptchaField()
+    submit = SubmitField("Eliminar definitivamente")
