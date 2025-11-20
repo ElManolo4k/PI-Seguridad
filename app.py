@@ -9,6 +9,7 @@ from typing import Any, Dict
 from openpyxl import Workbook
 
 
+
 # --- Third-party packages para Flask ---
 from dotenv import load_dotenv
 from flask import Flask, render_template, flash, redirect, url_for, session, request, jsonify, Response, send_file
@@ -16,6 +17,8 @@ from flask_wtf import CSRFProtect
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from markupsafe import Markup, escape
 from werkzeug.exceptions import NotFound
+
+
 
 from sqlalchemy import create_engine, select, or_, cast, String, func
 from sqlalchemy.exc import IntegrityError
