@@ -32,6 +32,7 @@ class UserCreateForm(FlaskForm):
     email = StringField("Correo", validators=[DataRequired(), Email(), Length(max=120)])
     role = SelectField("Rol", choices=[("admin", "admin"), ("usuario", "usuario")], validators=[DataRequired()])
     password = PasswordField("Contraseña", validators=[DataRequired(), Length(min=6)])
+    recaptcha = RecaptchaField()
     submit = SubmitField("Crear")
 
 
@@ -196,6 +197,7 @@ class EmpresaExternaForm(FlaskForm):
         "Nombre / razón social",
         validators=[DataRequired(), Length(max=150)]
     )
+    recaptcha = RecaptchaField()
     submit = SubmitField("Guardar")
 
 
@@ -226,4 +228,5 @@ class ResponsableEntregaForm(FlaskForm):
         validators=[DataRequired(message="Debes seleccionar la empresa externa.")]
     )
 
+    recaptcha = RecaptchaField()
     submit = SubmitField("Guardar")

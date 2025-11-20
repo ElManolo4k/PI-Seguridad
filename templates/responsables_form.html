@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% block title %}{{ 'Editar responsable' if is_edit else 'Nuevo responsable' }}{% endblock %}
 
+{% block head_extra %}
+  {% if not is_edit %}
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  {% endif %}
+{% endblock %}
+
 {% block content %}
 <div class="row justify-content-center">
   <div class="col-lg-7 col-xl-6">
@@ -33,6 +39,12 @@
               {{ form.empresa_id(class="form-select", id=form.empresa_id.id) }}
             </div>
           </div>
+
+          {% if not is_edit %}
+          <div class="mb-3 mt-3 d-flex justify-content-center">
+            {{ form.recaptcha }}
+          </div>
+          {% endif %}
 
           <div class="d-flex gap-2 mt-4">
             {{ form.submit(class="btn btn-primary") }}

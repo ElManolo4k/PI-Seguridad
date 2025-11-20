@@ -1,6 +1,12 @@
 {% extends "base.html" %}
 {% block title %}{{ 'Editar empresa' if is_edit else 'Nueva empresa' }}{% endblock %}
 
+{% block head_extra %}
+  {% if not is_edit %}
+  <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+  {% endif %}
+{% endblock %}
+
 {% block content %}
 <div class="row justify-content-center">
   <div class="col-lg-6 col-xl-5">
@@ -21,6 +27,12 @@
             <label class="form-label" for="{{ form.nombre.id }}">{{ form.nombre.label }}</label>
             {{ form.nombre(class="form-control", id=form.nombre.id) }}
           </div>
+
+          {% if not is_edit %}
+          <div class="mb-3 d-flex justify-content-center">
+            {{ form.recaptcha }}
+          </div>
+          {% endif %}
 
           <div class="d-flex gap-2 mt-3">
             {{ form.submit(class="btn btn-primary") }}
